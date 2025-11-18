@@ -1,9 +1,11 @@
 DOMAIN-SUFFIX,monzo.com
 DOMAIN-SUFFIX,monzo-alt.net
 DOMAIN-SUFFIX,statuspage.io
-DOMAIN-KEYWORD,ifast
-DOMAIN-KEYWORD,wise
-DOMAIN-KEYWORD,paypal
-DOMAIN-KEYWORD,kraken
-DOMAIN-KEYWORD,myfin
-DOMAIN-KEYWORD,neverless
+DOMAIN-SUFFIX,ifastgb.com
+DOMAIN-SUFFIX,wise.com
+DOMAIN-SUFFIX,paypal.com
+DOMAIN-SUFFIX,paypalobjects.com
+DOMAIN-SUFFIX,kraken.com
+DOMAIN-SUFFIX,myfin.bg
+DOMAIN-SUFFIX,neverless.com
+DOMAIN-SUFFIX,dyneti.com
