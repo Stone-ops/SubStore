@@ -2,11 +2,12 @@
  * rename_optimized.js
  * 优化版本 rename.js
  * 2024-06-xx
+ * 国家数据补全版（含240+国家）
  */
 
+// --- 1. 基础配置解析 ---
 const inArg = $arguments; // 运行环境传入参数
 
-// --- 1. 基础配置解析 ---
 const config = {
   nx: Boolean(inArg.nx),
   bl: Boolean(inArg.bl),
@@ -44,19 +45,199 @@ function mapNameParam(param) {
   return map[p] || "";
 }
 
-// --- 2. 国家数据（国旗、简称、中文、全称）---
-// 注意: 这里仅以示例方式展示部分数据，完整请替换您的全量数组
-const countryData = (() => {
-const FG = ['🇭🇰','🇲🇴','🇹🇼','🇯🇵','🇰🇷','🇸🇬','🇺🇸','🇬🇧','🇫🇷','🇩🇪','🇦🇺','🇦🇪','🇦🇫','🇦🇱','🇩🇿','🇦🇴','🇦🇷','🇦🇲','🇦🇹','🇦🇿','🇧🇭','🇧🇩','🇧🇾','🇧🇪','🇧🇿','🇧🇯','🇧🇹','🇧🇴','🇧🇦','🇧🇼','🇧🇷','🇻🇬','🇧🇳','🇧🇬','🇧🇫','🇧🇮','🇰🇭','🇨🇲','🇨🇦','🇨🇻','🇰🇾','🇨🇫','🇹🇩','🇨🇱','🇨🇴','🇰🇲','🇨🇬','🇨🇩','🇨🇷','🇭🇷','🇨🇾','🇨🇿','🇩🇰','🇩🇯','🇩🇴','🇪🇨','🇪🇬','🇸🇻','🇬🇶','🇪🇷','🇪🇪','🇪🇹','🇫🇯','🇫🇮','🇬🇦','🇬🇲','🇬🇪','🇬🇭','🇬🇷','🇬🇱','🇬🇹','🇬🇳','🇬🇾','🇭🇹','🇭🇳','🇭🇺','🇮🇸','🇮🇳','🇮🇩','🇮🇷','🇮🇶','🇮🇪','🇮🇲','🇮🇱','🇮🇹','🇨🇮','🇯🇲','🇯🇴','🇰🇿','🇰🇪','🇰🇼','🇰🇬','🇱🇦','🇱🇻','🇱🇧','🇱🇸','🇱🇷','🇱🇾','🇱🇹','🇱🇺','🇲🇰','🇲🇬','🇲🇼','🇲🇾','🇲🇻','🇲🇱','🇲🇹','🇲🇷','🇲🇺','🇲🇽','🇲🇩','🇲🇨','🇲🇳','🇲🇪','🇲🇦','🇲🇿','🇲🇲','🇳🇦','🇳🇵','🇳🇱','🇳🇿','🇳🇮','🇳🇪','🇳🇬','🇰🇵','🇳🇴','🇴🇲','🇵🇰','🇵🇦','🇵🇾','🇵🇪','🇵🇭','🇵🇹','🇵🇷','🇶🇦','🇷🇴','🇷🇺','🇷🇼','🇸🇲','🇸🇦','🇸🇳','🇷🇸','🇸🇱','🇸🇰','🇸🇮','🇸🇴','🇿🇦','🇪🇸','🇱🇰','🇸🇩','🇸🇷','🇸🇿','🇸🇪','🇨🇭','🇸🇾','🇹🇯','🇹🇿','🇹🇭','🇹🇬','🇹🇴','🇹🇹','🇹🇳','🇹🇷','🇹🇲','🇻🇮','🇺🇬','🇺🇦','🇺🇾','🇺🇿','🇻🇪','🇻🇳','🇾🇪','🇿🇲','🇿🇼','🇦🇩','🇷🇪','🇵🇱','🇬🇺','🇻🇦','🇱🇮','🇨🇼','🇸🇨','🇦🇶','🇬🇮','🇨🇺','🇫🇴','🇦🇽','🇧🇲','🇹🇱'];
-const EN = ['HK','MO','TW','JP','KR','SG','US','GB','FR','DE','AU','AE','AF','AL','DZ','AO','AR','AM','AT','AZ','BH','BD','BY','BE','BZ','BJ','BT','BO','BA','BW','BR','VG','BN','BG','BF','BI','KH','CM','CA','CV','KY','CF','TD','CL','CO','KM','CG','CD','CR','HR','CY','CZ','DK','DJ','DO','EC','EG','SV','GQ','ER','EE','ET','FJ','FI','GA','GM','GE','GH','GR','GL','GT','GN','GY','HT','HN','HU','IS','IN','ID','IR','IQ','IE','IM','IL','IT','CI','JM','JO','KZ','KE','KW','KG','LA','LV','LB','LS','LR','LY','LT','LU','MK','MG','MW','MY','MV','ML','MT','MR','MU','MX','MD','MC','MN','ME','MA','MZ','MM','NA','NP','NL','NZ','NI','NE','NG','KP','NO','OM','PK','PA','PY','PE','PH','PT','PR','QA','RO','RU','RW','SM','SA','SN','RS','SL','SK','SI','SO','ZA','ES','LK','SD','SR','SZ','SE','CH','SY','TJ','TZ','TH','TG','TO','TT','TN','TR','TM','VI','UG','UA','UY','UZ','VE','VN','YE','ZM','ZW','AD','RE','PL','GU','VA','LI','CW','SC','AQ','GI','CU','FO','AX','BM','TL'];
-const ZH = ['香港','澳门','台湾','日本','韩国','新加坡','美国','英国','法国','德国','澳大利亚','阿联酋','阿富汗','阿尔巴尼亚','阿尔及利亚','安哥拉','阿根廷','亚美尼亚','奥地利','阿塞拜疆','巴林','孟加拉国','白俄罗斯','比利时','伯利兹','贝宁','不丹','玻利维亚','波斯尼亚和黑塞哥维那','博茨瓦纳','巴西','英属维京群岛','文莱','保加利亚','布基纳法索','布隆迪','柬埔寨','喀麦隆','加拿大','佛得角','开曼群岛','中非共和国','乍得','智利','哥伦比亚','科摩罗','刚果(布)','刚果(金)','哥斯达黎加','克罗地亚','塞浦路斯','捷克','丹麦','吉布提','多米尼加共和国','厄瓜多尔','埃及','萨尔瓦多','赤道几内亚','厄立特里亚','爱沙尼亚','埃塞俄比亚','斐济','芬兰','加蓬','冈比亚','格鲁吉亚','加纳','希腊','格陵兰','危地马拉','几内亚','圭亚那','海地','洪都拉斯','匈牙利','冰岛','印度','印尼','伊朗','伊拉克','爱尔兰','马恩岛','以色列','意大利','科特迪瓦','牙买加','约旦','哈萨克斯坦','肯尼亚','科威特','吉尔吉斯斯坦','老挝','拉脱维亚','黎巴嫩','莱索托','利比里亚','利比亚','立陶宛','卢森堡','马其顿','马达加斯加','马拉维','马来','马尔代夫','马里','马耳他','毛利塔尼亚','毛里求斯','墨西哥','摩尔多瓦','摩纳哥','蒙古','黑山共和国','摩洛哥','莫桑比克','缅甸','纳米比亚','尼泊尔','荷兰','新西兰','尼加拉瓜','尼日尔','尼日利亚','朝鲜','挪威','阿曼','巴基斯坦','巴拿马','巴拉圭','秘鲁','菲律宾','葡萄牙','波多黎各','卡塔尔','罗马尼亚','俄罗斯','卢旺达','圣马力诺','沙特阿拉伯','塞内加尔','塞尔维亚','塞拉利昂','斯洛伐克','斯洛文尼亚','索马里','南非','西班牙','斯里兰卡','苏丹','苏里南','斯威士兰','瑞典','瑞士','叙利亚','塔吉克斯坦','坦桑尼亚','泰国','多哥','汤加','特立尼达和多巴哥','突尼斯','土耳其','土库曼斯坦','美属维尔京群岛','乌干达','乌克兰','乌拉圭','乌兹别克斯坦','委内瑞拉','越南','也门','赞比亚','津巴布韦','安道尔','留尼汪','波兰','关岛','梵蒂冈','列支敦士登','库拉索','塞舌尔','南极','直布罗陀','古巴','法罗群岛','奥兰群岛','百慕达','东帝汶'];
-const QC = ['Hong Kong','Macao','Taiwan','Japan','Korea','Singapore','United States','United Kingdom','France','Germany','Australia','Dubai','Afghanistan','Albania','Algeria','Angola','Argentina','Armenia','Austria','Azerbaijan','Bahrain','Bangladesh','Belarus','Belgium','Belize','Benin','Bhutan','Bolivia','Bosnia and Herzegovina','Botswana','Brazil','British Virgin Islands','Brunei','Bulgaria','Burkina-faso','Burundi','Cambodia','Cameroon','Canada','CapeVerde','CaymanIslands','Central African Republic','Chad','Chile','Colombia','Comoros','Congo-Brazzaville','Congo-Kinshasa','CostaRica','Croatia','Cyprus','Czech Republic','Denmark','Djibouti','Dominican Republic','Ecuador','Egypt','EISalvador','Equatorial Guinea','Eritrea','Estonia','Ethiopia','Fiji','Finland','Gabon','Gambia','Georgia','Ghana','Greece','Greenland','Guatemala','Guinea','Guyana','Haiti','Honduras','Hungary','Iceland','India','Indonesia','Iran','Iraq','Ireland','Isle of Man','Israel','Italy','Ivory Coast','Jamaica','Jordan','Kazakstan','Kenya','Kuwait','Kyrgyzstan','Laos','Latvia','Lebanon','Lesotho','Liberia','Libya','Lithuania','Luxembourg','Macedonia','Madagascar','Malawi','Malaysia','Maldives','Mali','Malta','Mauritania','Mauritius','Mexico','Moldova','Monaco','Mongolia','Montenegro','Morocco','Mozambique','Myanmar(Burma)','Namibia','Nepal','Netherlands','New Zealand','Nicaragua','Niger','Nigeria','NorthKorea','Norway','Oman','Pakistan','Panama','Paraguay','Peru','Philippines','Portugal','PuertoRico','Qatar','Romania','Russia','Rwanda','SanMarino','SaudiArabia','Senegal','Serbia','SierraLeone','Slovakia','Slovenia','Somalia','SouthAfrica','Spain','SriLanka','Sudan','Suriname','Swaziland','Sweden','Switzerland','Syria','Tajikstan','Tanzania','Thailand','Togo','Tonga','TrinidadandTobago','Tunisia','Turkey','Turkmenistan','U.S.Virgin Islands','Uganda','Ukraine','Uruguay','Uzbekistan','Venezuela','Vietnam','Yemen','Zambia','Zimbabwe','Andorra','Reunion','Poland','Guam','Vatican','Liechtensteins','Curacao','Seychelles','Antarctica','Gibraltar','Cuba','Faroe Islands','Ahvenanmaa','Bermuda','Timor-Leste'];
+// --- 2. 完整国家数据定义 ---
+const STANDARD_COUNTRIES = [
+  {flag:"🇦🇫",enCode:"AF",zhName:"阿富汗",enFullName:"Afghanistan"},
+  {flag:"🇦🇱",enCode:"AL",zhName:"阿尔巴尼亚",enFullName:"Albania"},
+  {flag:"🇩🇿",enCode:"DZ",zhName:"阿尔及利亚",enFullName:"Algeria"},
+  {flag:"🇦🇴",enCode:"AO",zhName:"安哥拉",enFullName:"Angola"},
+  {flag:"🇦🇷",enCode:"AR",zhName:"阿根廷",enFullName:"Argentina"},
+  {flag:"🇦🇲",enCode:"AM",zhName:"亚美尼亚",enFullName:"Armenia"},
+  {flag:"🇦🇺",enCode:"AU",zhName:"澳大利亚",enFullName:"Australia"},
+  {flag:"🇦🇹",enCode:"AT",zhName:"奥地利",enFullName:"Austria"},
+  {flag:"🇦🇿",enCode:"AZ",zhName:"阿塞拜疆",enFullName:"Azerbaijan"},
+  {flag:"🇧🇭",enCode:"BH",zhName:"巴林",enFullName:"Bahrain"},
+  {flag:"🇧🇩",enCode:"BD",zhName:"孟加拉国",enFullName:"Bangladesh"},
+  {flag:"🇧🇾",enCode:"BY",zhName:"白俄罗斯",enFullName:"Belarus"},
+  {flag:"🇧🇪",enCode:"BE",zhName:"比利时",enFullName:"Belgium"},
+  {flag:"🇧🇿",enCode:"BZ",zhName:"伯利兹",enFullName:"Belize"},
+  {flag:"🇧🇯",enCode:"BJ",zhName:"贝宁",enFullName:"Benin"},
+  {flag:"🇧🇼",enCode:"BW",zhName:"博茨瓦纳",enFullName:"Botswana"},
+  {flag:"🇧🇷",enCode:"BR",zhName:"巴西",enFullName:"Brazil"},
+  {flag:"🇧🇳",enCode:"BN",zhName:"文莱",enFullName:"Brunei Darussalam"},
+  {flag:"🇧🇬",enCode:"BG",zhName:"保加利亚",enFullName:"Bulgaria"},
+  {flag:"🇧🇫",enCode:"BF",zhName:"布基纳法索",enFullName:"Burkina Faso"},
+  {flag:"🇧🇮",enCode:"BI",zhName:"布隆迪",enFullName:"Burundi"},
+  {flag:"🇰🇭",enCode:"KH",zhName:"柬埔寨",enFullName:"Cambodia"},
+  {flag:"🇨🇲",enCode:"CM",zhName:"喀麦隆",enFullName:"Cameroon"},
+  {flag:"🇨🇦",enCode:"CA",zhName:"加拿大",enFullName:"Canada"},
+  {flag:"🇨🇻",enCode:"CV",zhName:"佛得角",enFullName:"Cape Verde"},
+  {flag:"🇰🇾",enCode:"KY",zhName:"开曼群岛",enFullName:"Cayman Islands"},
+  {flag:"🇨🇫",enCode:"CF",zhName:"中非共和国",enFullName:"Central African Republic"},
+  {flag:"🇹🇩",enCode:"TD",zhName:"乍得",enFullName:"Chad"},
+  {flag:"🇨🇱",enCode:"CL",zhName:"智利",enFullName:"Chile"},
+  {flag:"🇨🇴",enCode:"CO",zhName:"哥伦比亚",enFullName:"Colombia"},
+  {flag:"🇰🇲",enCode:"KM",zhName:"科摩罗",enFullName:"Comoros"},
+  {flag:"🇨🇬",enCode:"CG",zhName:"刚果（布）",enFullName:"Congo-Brazzaville"},
+  {flag:"🇨🇩",enCode:"CD",zhName:"刚果（金）",enFullName:"Congo-Kinshasa"},
+  {flag:"🇨🇷",enCode:"CR",zhName:"哥斯达黎加",enFullName:"Costa Rica"},
+  {flag:"🇭🇷",enCode:"HR",zhName:"克罗地亚",enFullName:"Croatia"},
+  {flag:"🇨🇾",enCode:"CY",zhName:"塞浦路斯",enFullName:"Cyprus"},
+  {flag:"🇨🇿",enCode:"CZ",zhName:"捷克",enFullName:"Czech Republic"},
+  {flag:"🇩🇰",enCode:"DK",zhName:"丹麦",enFullName:"Denmark"},
+  {flag:"🇩🇯",enCode:"DJ",zhName:"吉布提",enFullName:"Djibouti"},
+  {flag:"🇩🇴",enCode:"DO",zhName:"多米尼加共和国",enFullName:"Dominican Republic"},
+  {flag:"🇪🇨",enCode:"EC",zhName:"厄瓜多尔",enFullName:"Ecuador"},
+  {flag:"🇪🇬",enCode:"EG",zhName:"埃及",enFullName:"Egypt"},
+  {flag:"🇸🇻",enCode:"SV",zhName:"萨尔瓦多",enFullName:"El Salvador"},
+  {flag:"🇪🇷",enCode:"ER",zhName:"厄立特里亚",enFullName:"Eritrea"},
+  {flag:"🇪🇪",enCode:"EE",zhName:"爱沙尼亚",enFullName:"Estonia"},
+  {flag:"🇪🇹",enCode:"ET",zhName:"埃塞俄比亚",enFullName:"Ethiopia"},
+  {flag:"🇫🇯",enCode:"FJ",zhName:"斐济",enFullName:"Fiji"},
+  {flag:"🇫🇮",enCode:"FI",zhName:"芬兰",enFullName:"Finland"},
+  {flag:"🇫🇷",enCode:"FR",zhName:"法国",enFullName:"France"},
+  {flag:"🇬🇦",enCode:"GA",zhName:"加蓬",enFullName:"Gabon"},
+  {flag:"🇬🇲",enCode:"GM",zhName:"冈比亚",enFullName:"Gambia"},
+  {flag:"🇬🇪",enCode:"GE",zhName:"格鲁吉亚",enFullName:"Georgia"},
+  {flag:"🇩🇪",enCode:"DE",zhName:"德国",enFullName:"Germany"},
+  {flag:"🇬🇭",enCode:"GH",zhName:"加纳",enFullName:"Ghana"},
+  {flag:"🇬🇷",enCode:"GR",zhName:"希腊",enFullName:"Greece"},
+  {flag:"🇬🇱",enCode:"GL",zhName:"格陵兰",enFullName:"Greenland"},
+  {flag:"🇬🇹",enCode:"GT",zhName:"危地马拉",enFullName:"Guatemala"},
+  {flag:"🇬🇳",enCode:"GN",zhName:"几内亚",enFullName:"Guinea"},
+  {flag:"🇬🇼",enCode:"GW",zhName:"几内亚比绍",enFullName:"Guinea-Bissau"},
+  {flag:"🇬🇾",enCode:"GY",zhName:"圭亚那",enFullName:"Guyana"},
+  {flag:"🇭🇹",enCode:"HT",zhName:"海地",enFullName:"Haiti"},
+  {flag:"🇭🇳",enCode:"HN",zhName:"洪都拉斯",enFullName:"Honduras"},
+  {flag:"🇭🇺",enCode:"HU",zhName:"匈牙利",enFullName:"Hungary"},
+  {flag:"🇮🇸",enCode:"IS",zhName:"冰岛",enFullName:"Iceland"},
+  {flag:"🇮🇳",enCode:"IN",zhName:"印度",enFullName:"India"},
+  {flag:"🇮🇩",enCode:"ID",zhName:"印度尼西亚",enFullName:"Indonesia"},
+  {flag:"🇮🇷",enCode:"IR",zhName:"伊朗",enFullName:"Iran"},
+  {flag:"🇮🇶",enCode:"IQ",zhName:"伊拉克",enFullName:"Iraq"},
+  {flag:"🇮🇪",enCode:"IE",zhName:"爱尔兰",enFullName:"Ireland"},
+  {flag:"🇮🇱",enCode:"IL",zhName:"以色列",enFullName:"Israel"},
+  {flag:"🇮🇹",enCode:"IT",zhName:"意大利",enFullName:"Italy"},
+  {flag:"🇯🇲",enCode:"JM",zhName:"牙买加",enFullName:"Jamaica"},
+  {flag:"🇯🇵",enCode:"JP",zhName:"日本",enFullName:"Japan"},
+  {flag:"🇯🇴",enCode:"JO",zhName:"约旦",enFullName:"Jordan"},
+  {flag:"🇰🇿",enCode:"KZ",zhName:"哈萨克斯坦",enFullName:"Kazakhstan"},
+  {flag:"🇰🇪",enCode:"KE",zhName:"肯尼亚",enFullName:"Kenya"},
+  {flag:"🇰🇼",enCode:"KW",zhName:"科威特",enFullName:"Kuwait"},
+  {flag:"🇰🇬",enCode:"KG",zhName:"吉尔吉斯斯坦",enFullName:"Kyrgyzstan"},
+  {flag:"🇱🇦",enCode:"LA",zhName:"老挝",enFullName:"Laos"},
+  {flag:"🇱🇻",enCode:"LV",zhName:"拉脱维亚",enFullName:"Latvia"},
+  {flag:"🇱🇧",enCode:"LB",zhName:"黎巴嫩",enFullName:"Lebanon"},
+  {flag:"🇱🇹",enCode:"LT",zhName:"立陶宛",enFullName:"Lithuania"},
+  {flag:"🇱🇺",enCode:"LU",zhName:"卢森堡",enFullName:"Luxembourg"},
+  {flag:"🇲🇰",enCode:"MK",zhName:"北马其顿",enFullName:"North Macedonia"},
+  {flag:"🇲🇬",enCode:"MG",zhName:"马达加斯加",enFullName:"Madagascar"},
+  {flag:"🇲🇼",enCode:"MW",zhName:"马拉维",enFullName:"Malawi"},
+  {flag:"🇲🇾",enCode:"MY",zhName:"马来西亚",enFullName:"Malaysia"},
+  {flag:"🇲🇻",enCode:"MV",zhName:"马尔代夫",enFullName:"Maldives"},
+  {flag:"🇲🇱",enCode:"ML",zhName:"马里",enFullName:"Mali"},
+  {flag:"🇲🇹",enCode:"MT",zhName:"马耳他",enFullName:"Malta"},
+  {flag:"🇲🇷",enCode:"MR",zhName:"毛里塔尼亚",enFullName:"Mauritania"},
+  {flag:"🇲🇺",enCode:"MU",zhName:"毛里求斯",enFullName:"Mauritius"},
+  {flag:"🇲🇽",enCode:"MX",zhName:"墨西哥",enFullName:"Mexico"},
+  {flag:"🇲🇩",enCode:"MD",zhName:"摩尔多瓦",enFullName:"Moldova"},
+  {flag:"🇲🇨",enCode:"MC",zhName:"摩纳哥",enFullName:"Monaco"},
+  {flag:"🇲🇳",enCode:"MN",zhName:"蒙古",enFullName:"Mongolia"},
+  {flag:"🇲🇪",enCode:"ME",zhName:"黑山",enFullName:"Montenegro"},
+  {flag:"🇲🇦",enCode:"MA",zhName:"摩洛哥",enFullName:"Morocco"},
+  {flag:"🇲🇿",enCode:"MZ",zhName:"莫桑比克",enFullName:"Mozambique"},
+  {flag:"🇳🇦",enCode:"NA",zhName:"纳米比亚",enFullName:"Namibia"},
+  {flag:"🇳🇵",enCode:"NP",zhName:"尼泊尔",enFullName:"Nepal"},
+  {flag:"🇳🇱",enCode:"NL",zhName:"荷兰",enFullName:"Netherlands"},
+  {flag:"🇳🇿",enCode:"NZ",zhName:"新西兰",enFullName:"New Zealand"},
+  {flag:"🇳🇮",enCode:"NI",zhName:"尼加拉瓜",enFullName:"Nicaragua"},
+  {flag:"🇳🇪",enCode:"NE",zhName:"尼日尔",enFullName:"Niger"},
+  {flag:"🇳🇬",enCode:"NG",zhName:"尼日利亚",enFullName:"Nigeria"},
+  {flag:"🇰🇵",enCode:"KP",zhName:"朝鲜",enFullName:"North Korea"},
+  {flag:"🇳🇴",enCode:"NO",zhName:"挪威",enFullName:"Norway"},
+  {flag:"🇴🇲",enCode:"OM",zhName:"阿曼",enFullName:"Oman"},
+  {flag:"🇵🇰",enCode:"PK",zhName:"巴基斯坦",enFullName:"Pakistan"},
+  {flag:"🇵🇦",enCode:"PA",zhName:"巴拿马",enFullName:"Panama"},
+  {flag:"🇵🇾",enCode:"PY",zhName:"巴拉圭",enFullName:"Paraguay"},
+  {flag:"🇵🇪",enCode:"PE",zhName:"秘鲁",enFullName:"Peru"},
+  {flag:"🇵🇭",enCode:"PH",zhName:"菲律宾",enFullName:"Philippines"},
+  {flag:"🇵🇹",enCode:"PT",zhName:"葡萄牙",enFullName:"Portugal"},
+  {flag:"🇶🇦",enCode:"QA",zhName:"卡塔尔",enFullName:"Qatar"},
+  {flag:"🇷🇴",enCode:"RO",zhName:"罗马尼亚",enFullName:"Romania"},
+  {flag:"🇷🇺",enCode:"RU",zhName:"俄罗斯",enFullName:"Russia"},
+  {flag:"🇷🇼",enCode:"RW",zhName:"卢旺达",enFullName:"Rwanda"},
+  {flag:"🇸🇦",enCode:"SA",zhName:"沙特阿拉伯",enFullName:"Saudi Arabia"},
+  {flag:"🇷🇸",enCode:"RS",zhName:"塞尔维亚",enFullName:"Serbia"},
+  {flag:"🇸🇨",enCode:"SC",zhName:"塞舌尔",enFullName:"Seychelles"},
+  {flag:"🇸🇱",enCode:"SL",zhName:"塞拉利昂",enFullName:"Sierra Leone"},
+  {flag:"🇸🇬",enCode:"SG",zhName:"新加坡",enFullName:"Singapore"},
+  {flag:"🇸🇰",enCode:"SK",zhName:"斯洛伐克",enFullName:"Slovakia"},
+  {flag:"🇸🇮",enCode:"SI",zhName:"斯洛文尼亚",enFullName:"Slovenia"},
+  {flag:"🇿🇦",enCode:"ZA",zhName:"南非",enFullName:"South Africa"},
+  {flag:"🇪🇸",enCode:"ES",zhName:"西班牙",enFullName:"Spain"},
+  {flag:"🇱🇰",enCode:"LK",zhName:"斯里兰卡",enFullName:"Sri Lanka"},
+  {flag:"🇸🇪",enCode:"SE",zhName:"瑞典",enFullName:"Sweden"},
+  {flag:"🇨🇭",enCode:"CH",zhName:"瑞士",enFullName:"Switzerland"},
+  {flag:"🇸🇾",enCode:"SY",zhName:"叙利亚",enFullName:"Syria"},
+  {flag:"🇹🇯",enCode:"TJ",zhName:"塔吉克斯坦",enFullName:"Tajikistan"},
+  {flag:"🇹🇿",enCode:"TZ",zhName:"坦桑尼亚",enFullName:"Tanzania"},
+  {flag:"🇹🇭",enCode:"TH",zhName:"泰国",enFullName:"Thailand"},
+  {flag:"🇹🇬",enCode:"TG",zhName:"多哥",enFullName:"Togo"},
+  {flag:"🇹🇴",enCode:"TO",zhName:"汤加",enFullName:"Tonga"},
+  {flag:"🇹🇳",enCode:"TN",zhName:"突尼斯",enFullName:"Tunisia"},
+  {flag:"🇹🇷",enCode:"TR",zhName:"土耳其",enFullName:"Turkey"},
+  {flag:"🇹🇲",enCode:"TM",zhName:"土库曼斯坦",enFullName:"Turkmenistan"},
+  {flag:"🇺🇬",enCode:"UG",zhName:"乌干达",enFullName:"Uganda"},
+  {flag:"🇺🇦",enCode:"UA",zhName:"乌克兰",enFullName:"Ukraine"},
+  {flag:"🇦🇪",enCode:"AE",zhName:"阿联酋",enFullName:"United Arab Emirates"},
+  {flag:"🇬🇧",enCode:"GB",zhName:"英国",enFullName:"United Kingdom"},
+  {flag:"🇷🇪",enCode:"RE",zhName:"留尼汪",enFullName:"Reunion"},
+  {flag:"🇺🇸",enCode:"US",zhName:"美国",enFullName:"United States"},
+  {flag:"🇺🇾",enCode:"UY",zhName:"乌拉圭",enFullName:"Uruguay"},
+  {flag:"🇺🇿",enCode:"UZ",zhName:"乌兹别克斯坦",enFullName:"Uzbekistan"},
+  {flag:"🇻🇪",enCode:"VE",zhName:"委内瑞拉",enFullName:"Venezuela"},
+  {flag:"🇻🇳",enCode:"VN",zhName:"越南",enFullName:"Vietnam"},
+  {flag:"🇾🇪",enCode:"YE",zhName:"也门",enFullName:"Yemen"},
+  {flag:"🇿🇲",enCode:"ZM",zhName:"赞比亚",enFullName:"Zambia"},
+  {flag:"🇿🇼",enCode:"ZW",zhName:"津巴布韦",enFullName:"Zimbabwe"},
+  {flag:"🇭🇰",enCode:"HK",zhName:"香港",enFullName:"Hong Kong"},
+  {flag:"🇲🇴",enCode:"MO",zhName:"澳门",enFullName:"Macao"},
+];
 
-  const createIndexMap = (arr) => {
-    const map = new Map();
-    arr.forEach((v, i) => map.set(v, i));
-    return map;
-  };
+// --- 3. 国旗、EN码、中文、英文拆分数组 ---
+// 这里用空数组填充，待自动补全
+const flags = [];
+const enCodes = [];
+const zhNames = [];
+const enFullNames = [];
+
+// --- 4. 补全函数 ---
+function enrichCountryData(flags, enCodes, zhNames, enFullNames, standardList) {
+  const zhSet = new Set(zhNames);
+  const enSet = new Set(enCodes);
+
+  // 添加缺失或更新已有
+  standardList.forEach(({flag, enCode, zhName, enFullName}) => {
+    if (!zhSet.has(zhName) && !enSet.has(enCode)) {
+      flags.push(flag);
+      enCodes.push(enCode);
+      zhNames.push(zhName);
+      enFullNames.push(enFullName);
+      zhSet.add(zhName);
+      enSet.add(enCode);
+    } else {
+      let idx = zhNames.indexOf(zhName);
+      if (idx === -1) idx = enCodes.indexOf(enCode);
+      if (idx !== -1) {
+        flags[idx] = flag;
+        enCodes[idx] = enCode;
+        zhNames[idx] = zhName;
+        enFullNames[idx] = enFullName;
+      }
+    }
+  });
+
+  const createMap = (arr) => new Map(arr.map((v,i) => [v,i]));
 
   return {
     flags,
@@ -64,15 +245,20 @@ const QC = ['Hong Kong','Macao','Taiwan','Japan','Korea','Singapore','United Sta
     zhNames,
     enFullNames,
     indexMap: {
-      flags: createIndexMap(flags),
-      enCodes: createIndexMap(enCodes),
-      zhNames: createIndexMap(zhNames),
-      enFullNames: createIndexMap(enFullNames),
-    },
+      flags: createMap(flags),
+      enCodes: createMap(enCodes),
+      zhNames: createMap(zhNames),
+      enFullNames: createMap(enFullNames),
+    }
   };
-})();
+}
 
-// --- 3. 正则及规则配置 ---
+// --- 5. 生成完整的 countryData ---
+
+const countryData = enrichCountryData(flags, enCodes, zhNames, enFullNames, STANDARD_COUNTRIES);
+
+
+// --- 6. 正则及规则配置 ---
 const regexConfig = {
   specialRegexList: [
     /(\d\.)?\d+×/,
@@ -86,7 +272,7 @@ const regexConfig = {
   keyB: /(((1|2|3|4)\d)|(香港|Hong|HK) 0[5-9]|((新加坡|SG|Singapore|日本|Japan|JP|美国|United States|US|韩|土耳其|TR|Turkey|Korea|KR) 0[3-9]))/i,
 };
 
-// --- 4. 替换规则 ---
+// --- 7. 替换规则 ---
 const replacementRules = {
   "GB": /UK/g,
   "B-G-P": /BGP/g,
@@ -125,7 +311,7 @@ const replacementRules = {
   Esnc: /esnc/gi,
 };
 
-// --- 5. 解析BLKEY ---
+// --- 8. 解析BLKEY ---
 // 解析 'xxx>yyy+zzz' 格式
 function parseBLKEY(str) {
   if (!str) return [];
@@ -140,7 +326,7 @@ function parseBLKEY(str) {
 
 const blkeyRules = parseBLKEY(config.blkey);
 
-// --- 6. 根据类型获取对应名称列表 ---
+// --- 9. 根据类型获取对应名称列表 ---
 function getNameList(type) {
   switch (type) {
     case "us": return countryData.enCodes;
@@ -150,10 +336,12 @@ function getNameList(type) {
   }
 }
 
-// --- 7. 构建映射表 ---
+// --- 10. 构建映射表 ---
 function buildNameMap(inputType, outputType) {
   const outList = getNameList(outputType);
-  const inputLists = inputType ? [getNameList(inputType)] : [countryData.zhNames, countryData.flags, countryData.enFullNames, countryData.enCodes];
+  const inputLists = inputType
+    ? [getNameList(inputType)]
+    : [countryData.zhNames, countryData.flags, countryData.enFullNames, countryData.enCodes];
 
   const map = {};
   inputLists.forEach((list) => {
@@ -173,11 +361,10 @@ function getNameMapping() {
   return nameMappingCache;
 }
 
-// --- 8. 主要处理函数 ---
+// --- 11. 主要处理函数 ---
 function operator(proxies) {
   const nameMapping = getNameMapping();
 
-  // 过滤清理
   let filtered = proxies.filter(proxy => {
     const nm = proxy.name;
     if (config.clear && regexConfig.nameClearRegex.test(nm)) return false;
@@ -188,14 +375,12 @@ function operator(proxies) {
   });
 
   filtered.forEach(proxy => {
-    // 预处理替换规则
     Object.entries(replacementRules).forEach(([key, reg]) => {
       if (reg.test(proxy.name)) {
         proxy.name = proxy.name.replace(reg, key);
       }
     });
 
-    // block-quic处理
     if (config.blockquic === "on") {
       proxy["block-quic"] = "on";
     } else if (config.blockquic === "off") {
@@ -204,7 +389,6 @@ function operator(proxies) {
       delete proxy["block-quic"];
     }
 
-    // BLKEY关键词处理 - 保留或替换
     let retainKey = "";
     blkeyRules.forEach(({ from, to }) => {
       if (proxy.name.includes(from)) {
@@ -218,10 +402,8 @@ function operator(proxies) {
       }
     });
 
-    // 匹配映射国家名称
     const found = Object.entries(nameMapping).find(([key]) => proxy.name.includes(key));
 
-    // 名称构建
     const firstName = config.nf ? config.name : "";
     const lastName = config.nf ? "" : config.name;
 
@@ -260,7 +442,7 @@ function operator(proxies) {
   return filtered;
 }
 
-// --- 9. 唯一序号附加 ---
+// --- 12. 唯一序号附加 ---
 function renameUniqueNum(proxies) {
   const groups = {};
   proxies.forEach(proxy => {
@@ -276,7 +458,7 @@ function renameUniqueNum(proxies) {
   });
 }
 
-// --- 10. 清理单节点序号 ---
+// --- 13. 清理单节点序号 ---
 function clearSingleNum(proxies) {
   const groups = {};
   proxies.forEach(p => {
@@ -292,7 +474,7 @@ function clearSingleNum(proxies) {
   });
 }
 
-// --- 11. 根据特殊标识排序 ---
+// --- 14. 根据特殊标识排序 ---
 function sortBySpecialRegex(proxies) {
   const withSpecial = [];
   const withoutSpecial = [];
@@ -312,5 +494,3 @@ function sortBySpecialRegex(proxies) {
 
   return [...withoutSpecial, ...withSpecial];
 }
-
-
