@@ -4,31 +4,89 @@
  * 2024-06-xx
  * 国家数据补全版（含240+国家）
  */
+// --- 1. 基础配置解析改造 ---
+// 替换你原代码第一部分 config 解析
+// 你组合的开关组合定义
+const comboFlags = {
+  flag: true, #给节点前面加国旗
+  one: true,  #清理只有一个节点的地区的01
+  nf: true,   #把 name= 的前缀值放在最前面
+  bl: true,   #正则匹配保留 [0.1x, x0.2, 6x ,3倍]等标识
+  blgd: true, #保留: 家宽 IPLC ˣ² 等
+  blpx: true, #如果用了上面的bl参数,对保留标识后的名称分组排序,如果没用上面的bl参数单独使用blpx则不起任何作用
+};  
+/**
+ * 根据输入参数对象 $arguments，构造完整 config 配置。
+ * 如果传入 useCombo=true，则自动合并组合配置。
+ * 用户参数有最高优先级，覆盖默认和组合的配置。
+ */
+function buildConfig(inArg) {
+  const defaultConfig = {
+    nx: false,    #保留1倍率与不显示倍率的
+    bl: false,    #正则匹配保留 [0.1x, x0.2, 6x ,3倍]等标识
+    nf: false,    #把 name= 的前缀值放在最前面
+    key: false,
+    blgd: false,  #保留: 家宽 IPLC ˣ² 等
+    blpx: false,  #如果用了上面的bl参数,对保留标识后的名称分组排序,如果没用上面的bl参数单独使用blpx则不起任何作用
+    blnx: false,  #只保留高倍率
+    one: false,   #清理只有一个节点的地区的01
+    debug: false,
+    clear: false, #清理乱名
+    flag: false,  #给节点前面加国旗
+    nm: false,    #保留没有匹配到的节点
+    fgf: " ",     #节点名前缀或国旗分隔符，默认为空格；
+    sn: " ",      #设置国家与序号之间的分隔符，默认为空格；
+    name: "",     #节点添加机场名称前缀；
+    blkey: "",    #用+号添加多个关键词 保留节点名的自定义字段 需要区分大小写! 如果需要修改 保留的关键词 替换成别的 可以用 > 分割 例如 [#blkey=GPT>新名字+其他关键词] 这将把【GPT】替换成【新名字】
+    blockquic: "",  #blockquic=on 阻止; blockquic=off 不阻止
+    inname: "",   #自动判断机场节点名类型 优先级 zh(中文) -> flag(国旗) -> quan(英文全称) -> en(英文简写)
+    outname: "",  #输出节点名可选参数: (cn或zh ，us或en ，gq或flag ，quan) 对应：(中文，英文缩写 ，国旗 ，英文全称) 默认中文 例如 [out=en] 或 out=us 输出英文缩写
+  };
+  if (!inArg || typeof inArg !== "object") {
+    inArg = {};
+  }
+  // 先复制默认配置
+  let config = {...defaultConfig};
+  // 组合开关，默认不开启
+  const useCombo = Boolean(inArg.useCombo);
+  // 去除 useCombo 避免污染后面合并参数
+  const paramCopy = {...inArg};
+  delete paramCopy.useCombo;
+  // 如果组合开了，先合并组合配置
+  if (useCombo) {
+    config = {...config, ...comboFlags};
+  }
+  // 再合并用户传入配置（有传则用传的，没有则用默认+组合）
+  for (const key in paramCopy) {
+    if (paramCopy.hasOwnProperty(key)) {
+      // 布尔型转换
+      if (typeof defaultConfig[key] === "boolean") {
+        // 允许传字符串 "true"/"false" 也做转换
+        if (typeof paramCopy[key] === "string") {
+          config[key] = paramCopy[key].toLowerCase() === "true";
+        } else {
+          config[key] = Boolean(paramCopy[key]);
+        }
+      } else if (typeof defaultConfig[key] === "string") {
+        if (typeof paramCopy[key] === "string") {
+          config[key] = decodeURI(paramCopy[key]);
+        } else if (paramCopy[key] !== undefined && paramCopy[key] !== null) {
+          config[key] = String(paramCopy[key]);
+        }
+      } else {
+        // 其它类型：直接赋值
+        config[key] = paramCopy[key];
+      }
+    }
+  }
+  // 特殊处理 inname, outname 通过 mapNameParam 映射
+  config.inname = mapNameParam(config.inname);
+  config.outname = mapNameParam(config.outname);
+  return config;
+}
+// 使用buildConfig替代原config初始化
+const config = buildConfig($arguments);
 
-// --- 1. 基础配置解析 ---
-const inArg = $arguments; // 运行环境传入参数
-
-const config = {
-  nx: Boolean(inArg.nx),
-  bl: Boolean(inArg.bl),
-  nf: Boolean(inArg.nf),
-  key: Boolean(inArg.key),
-  blgd: Boolean(inArg.blgd),
-  blpx: Boolean(inArg.blpx),
-  blnx: Boolean(inArg.blnx),
-  one: Boolean(inArg.one),
-  debug: Boolean(inArg.debug),
-  clear: Boolean(inArg.clear),
-  flag: Boolean(inArg.flag),
-  nm: Boolean(inArg.nm),
-  fgf: inArg.fgf === undefined ? " " : decodeURI(inArg.fgf),
-  sn: inArg.sn === undefined ? " " : decodeURI(inArg.sn),
-  name: inArg.name === undefined ? "" : decodeURI(inArg.name),
-  blkey: inArg.blkey === undefined ? "" : decodeURI(inArg.blkey),
-  blockquic: inArg.blockquic === undefined ? "" : decodeURI(inArg.blockquic),
-  inname: mapNameParam(inArg.in),
-  outname: mapNameParam(inArg.out),
-};
 
 function mapNameParam(param) {
   if (!param) return "";
@@ -213,6 +271,13 @@ const STANDARD_COUNTRIES = [
   {flag:"🇬🇺",enCode:"GU",zhName:"关岛",enFullName:"Guam"},
   {flag:"🇦🇶",enCode:"AQ",zhName:"南极洲",enFullName:"Antarctica"},
   {flag:"🇨🇳",enCode:"CN",zhName:"中国",enFullName:"China"},
+  {flag:"🇻🇮", enCode:"VI", zhName:"美属维尔京群岛", enFullName:"U.S. Virgin Islands"},
+  {flag:"🇵🇷", enCode:"PR", zhName:"波多黎各", enFullName:"Puerto Rico"},
+  {flag:"🇬🇫", enCode:"GF", zhName:"法属圭亚那", enFullName:"French Guiana"},
+  {flag:"🇬🇮", enCode:"GI", zhName:"直布罗陀", enFullName:"Gibraltar"},
+  {flag:"🇲🇶", enCode:"MQ", zhName:"马提尼克", enFullName:"Martinique"},
+  {flag:"🇳🇨", enCode:"NC", zhName:"新喀里多尼亚", enFullName:"New Caledonia"},
+  {flag:"🇵🇸", enCode:"PS", zhName:"巴勒斯坦", enFullName:"Palestine"},
 ];
 
 // --- 3. 国旗、EN码、中文、英文拆分数组 ---
@@ -505,4 +570,5 @@ function sortBySpecialRegex(proxies) {
 
   return [...withoutSpecial, ...withSpecial];
 }
+
 
