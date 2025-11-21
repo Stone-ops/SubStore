@@ -202,6 +202,17 @@ const STANDARD_COUNTRIES = [
   {flag:"🇿🇼",enCode:"ZW",zhName:"津巴布韦",enFullName:"Zimbabwe"},
   {flag:"🇭🇰",enCode:"HK",zhName:"香港",enFullName:"Hong Kong"},
   {flag:"🇲🇴",enCode:"MO",zhName:"澳门",enFullName:"Macao"},
+  {flag:"🇹🇼",enCode:"TW",zhName:"台湾",enFullName:"Taiwan"},
+  {flag:"🇰🇷",enCode:"KR",zhName:"韩国",enFullName:"South Korea"},
+  {flag:"🇲🇲",enCode:"MM",zhName:"缅甸",enFullName:"Myanmar"},
+  {flag:"🇹🇱",enCode:"TL",zhName:"东帝汶",enFullName:"Timor-Leste"},
+  {flag:"🇻🇦",enCode:"VA",zhName:"梵蒂冈",enFullName:"Vatican City"},
+  {flag:"🇧🇲",enCode:"BM",zhName:"百慕大",enFullName:"Bermuda"},
+  {flag:"🇨🇺",enCode:"CU",zhName:"古巴",enFullName:"Cuba"},
+  {flag:"🇸🇧",enCode:"SB",zhName:"所罗门群岛",enFullName:"Solomon Islands"},
+  {flag:"🇬🇺",enCode:"GU",zhName:"关岛",enFullName:"Guam"},
+  {flag:"🇦🇶",enCode:"AQ",zhName:"南极洲",enFullName:"Antarctica"},
+  {flag:"🇨🇳",enCode:"CN",zhName:"中国",enFullName:"China"},
 ];
 
 // --- 3. 国旗、EN码、中文、英文拆分数组 ---
@@ -494,3 +505,4 @@ function sortBySpecialRegex(proxies) {
 
   return [...withoutSpecial, ...withSpecial];
 }
+
