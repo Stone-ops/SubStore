@@ -8,12 +8,12 @@
 // 替换你原代码第一部分 config 解析
 // 你组合的开关组合定义
 const comboFlags = {
-  flag: true, #给节点前面加国旗
-  one: true,  #清理只有一个节点的地区的01
-  nf: true,   #把 name= 的前缀值放在最前面
-  bl: true,   #正则匹配保留 [0.1x, x0.2, 6x ,3倍]等标识
-  blgd: true, #保留: 家宽 IPLC ˣ² 等
-  blpx: true, #如果用了上面的bl参数,对保留标识后的名称分组排序,如果没用上面的bl参数单独使用blpx则不起任何作用
+  flag: true, //给节点前面加国旗
+  one: true,  //清理只有一个节点的地区的01
+  nf: true,   //把 name= 的前缀值放在最前面
+  bl: true,   //正则匹配保留 [0.1x, x0.2, 6x ,3倍]等标识
+  blgd: true, //保留: 家宽 IPLC ˣ² 等
+  blpx: true, //如果用了上面的bl参数,对保留标识后的名称分组排序,如果没用上面的bl参数单独使用blpx则不起任何作用
 };  
 /**
  * 根据输入参数对象 $arguments，构造完整 config 配置。
@@ -22,25 +22,25 @@ const comboFlags = {
  */
 function buildConfig(inArg) {
   const defaultConfig = {
-    nx: false,    #保留1倍率与不显示倍率的
-    bl: false,    #正则匹配保留 [0.1x, x0.2, 6x ,3倍]等标识
-    nf: false,    #把 name= 的前缀值放在最前面
+    nx: false,    //保留1倍率与不显示倍率的
+    bl: false,    //正则匹配保留 [0.1x, x0.2, 6x ,3倍]等标识
+    nf: false,    //把 name= 的前缀值放在最前面
     key: false,
-    blgd: false,  #保留: 家宽 IPLC ˣ² 等
-    blpx: false,  #如果用了上面的bl参数,对保留标识后的名称分组排序,如果没用上面的bl参数单独使用blpx则不起任何作用
-    blnx: false,  #只保留高倍率
-    one: false,   #清理只有一个节点的地区的01
+    blgd: false,  //保留: 家宽 IPLC ˣ² 等
+    blpx: false,  //如果用了上面的bl参数,对保留标识后的名称分组排序,如果没用上面的bl参数单独使用blpx则不起任何作用
+    blnx: false,  //只保留高倍率
+    one: false,   //清理只有一个节点的地区的01
     debug: false,
-    clear: false, #清理乱名
-    flag: false,  #给节点前面加国旗
-    nm: false,    #保留没有匹配到的节点
-    fgf: " ",     #节点名前缀或国旗分隔符，默认为空格；
-    sn: " ",      #设置国家与序号之间的分隔符，默认为空格；
-    name: "",     #节点添加机场名称前缀；
-    blkey: "",    #用+号添加多个关键词 保留节点名的自定义字段 需要区分大小写! 如果需要修改 保留的关键词 替换成别的 可以用 > 分割 例如 [#blkey=GPT>新名字+其他关键词] 这将把【GPT】替换成【新名字】
-    blockquic: "",  #blockquic=on 阻止; blockquic=off 不阻止
-    inname: "",   #自动判断机场节点名类型 优先级 zh(中文) -> flag(国旗) -> quan(英文全称) -> en(英文简写)
-    outname: "",  #输出节点名可选参数: (cn或zh ，us或en ，gq或flag ，quan) 对应：(中文，英文缩写 ，国旗 ，英文全称) 默认中文 例如 [out=en] 或 out=us 输出英文缩写
+    clear: false, //清理乱名
+    flag: false,  //给节点前面加国旗
+    nm: false,    //保留没有匹配到的节点
+    fgf: " ",     //节点名前缀或国旗分隔符，默认为空格；
+    sn: " ",      //设置国家与序号之间的分隔符，默认为空格；
+    name: "",     //节点添加机场名称前缀；
+    blkey: "",    //用+号添加多个关键词 保留节点名的自定义字段 需要区分大小写! 如果需要修改 保留的关键词 替换成别的 可以用 > 分割 例如 [#blkey=GPT>新名字+其他关键词] 这将把【GPT】替换成【新名字】
+    blockquic: "",  //blockquic=on 阻止; blockquic=off 不阻止
+    inname: "",   //自动判断机场节点名类型 优先级 zh(中文) -> flag(国旗) -> quan(英文全称) -> en(英文简写)
+    outname: "",  //输出节点名可选参数: (cn或zh ，us或en ，gq或flag ，quan) 对应：(中文，英文缩写 ，国旗 ，英文全称) 默认中文 例如 [out=en] 或 out=us 输出英文缩写
   };
   if (!inArg || typeof inArg !== "object") {
     inArg = {};
